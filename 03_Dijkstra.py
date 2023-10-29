@@ -1,30 +1,25 @@
+
+
+"""
+Este programa te permitirá ingresar manualmente un grafo y un nodo de inicio, y 
+luego calculará las distancias más cortas desde el nodo de inicio a todos los demás nodos. 
+Puedes seguir el proceso paso a paso y ver los resultados en la consola.
+"""
+
 import heapq
 
-"""
-En este ejemplo, el algoritmo de Dijkstra se utiliza para encontrar las distancias más cortas
-desde un nodo de inicio (en este caso, 'A') a todos los demás nodos en un grafo ponderado. 
-El grafo se representa como un diccionario, donde las claves son los nodos y los valores son 
-diccionarios que contienen los nodos vecinos y los pesos de las aristas. 
-El algoritmo calcula las distancias más cortas y las muestra en la salida.
-"""
-
 def dijkstra(graph, start):
-    # Inicializar las distancias a todos los nodos como infinito y la distancia al nodo de inicio como 0.
     distances = {node: float('inf') for node in graph}
     distances[start] = 0
 
-    # Crear una cola de prioridad (heap) para mantener los nodos a explorar.
     priority_queue = [(0, start)]
 
     while priority_queue:
-        # Obtener el nodo con la distancia más corta.
         current_distance, current_node = heapq.heappop(priority_queue)
 
-        # Si encontramos una distancia más larga, omitirla.
         if current_distance > distances[current_node]:
             continue
 
-        # Explorar los nodos vecinos y actualizar sus distancias si encontramos un camino más corto.
         for neighbor, weight in graph[current_node].items():
             distance = current_distance + weight
             if distance < distances[neighbor]:
@@ -33,16 +28,29 @@ def dijkstra(graph, start):
 
     return distances
 
-# Ejemplo de uso
-graph = {
-    'A': {'B': 1, 'C': 4},
-    'B': {'A': 1, 'C': 2, 'D': 5},
-    'C': {'A': 4, 'B': 2, 'D': 1},
-    'D': {'B': 5, 'C': 1}
-}
-start_node = 'A'
+def build_graph():
+    graph = {}
+    num_nodes = int(input("Número de nodos: "))
 
-shortest_distances = dijkstra(graph, start_node)
-print("Distancias más cortas desde el nodo de inicio (", start_node, "):")
-for node, distance in shortest_distances.items():
-    print(node, ":", distance)
+    for i in range(num_nodes):
+        graph[chr(65 + i)] = {}
+
+    for node in graph:
+        neighbors = input(f"Ingrese vecinos para {node} (Formato: B:2, C:5, ...): ").split(", ")
+        for neighbor in neighbors:
+            neighbor, weight = neighbor.split(":")
+            graph[node][neighbor] = int(weight)
+
+    return graph
+
+def main():
+    graph = build_graph()
+    start_node = input("Nodo de inicio: ")
+
+    shortest_distances = dijkstra(graph, start_node)
+    print("\nDistancias más cortas desde el nodo de inicio (", start_node, "):")
+    for node, distance in shortest_distances.items():
+        print(node, ":", distance)
+
+if __name__ == "__main__":
+    main()
